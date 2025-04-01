@@ -1,3 +1,11 @@
+# python & flask files
+__pycache__/
+*.py[cod]
+*$py.class
+migrations/
+db.sqlite3
+db.sqlite3-journal
+
 .DS_Store
 node_modules
 /dist
