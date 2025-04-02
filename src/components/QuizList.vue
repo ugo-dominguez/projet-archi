@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import api from '@/services/api'
+import provider from '@/services/provider'
 
 export default {
   data() {
@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     fetchQuestionnaires() {
-      api.getQuestionnaires()
+      provider.getQuestionnaires()
         .then(data => {
           this.questionnaires = data
         })
@@ -51,7 +51,7 @@ export default {
     createQuiz() {
       if (!this.newQuizName.trim()) return
       
-      api.createQuestionnaire({ name: this.newQuizName })
+      provider.createQuestionnaire({ name: this.newQuizName })
         .then(newQuiz => {
           this.questionnaires.push(newQuiz)
           this.newQuizName = ''
@@ -63,7 +63,7 @@ export default {
     },
     deleteQuiz(id) {
       if (confirm('Êtes-vous sûr de vouloir supprimer ce questionnaire ?')) {
-        api.deleteQuestionnaire(id)
+        provider.deleteQuestionnaire(id)
           .then(() => {
             this.questionnaires = this.questionnaires.filter(q => q.id !== id)
           })

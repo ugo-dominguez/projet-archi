@@ -4,7 +4,7 @@
     
     <div v-else>
       <div class="quiz-header">
-        <h2>Éditeur: {{ questionnaire.name }}</h2>
+        <h2>Editeur: {{ questionnaire.name }}</h2>
         <div class="quiz-actions">
           <input v-model="questionnaire.name" @change="updateQuiz">
           <button @click="deleteQuiz" class="delete-btn">Supprimer ce questionnaire</button>
@@ -43,14 +43,16 @@
 </template>
 
 <script>
-import api from '@/services/api'
+import provider from '@/services/provider'
 import QuestionList from './QuestionList'
 import OpenQuestionForm from './OpenQuestionForm'
+import McqQuestionForm from './McqQuestionForm'
 
 export default {
   components: {
     QuestionList,
     OpenQuestionForm,
+    McqQuestionForm
   },
   props: {
     id: {
@@ -76,10 +78,10 @@ export default {
       this.loading = true
       
       Promise.all([
-        api.getQuestionnaires().then(quizzes => {
+        provider.getQuestionnaires().then(quizzes => {
           this.questionnaire = quizzes.find(q => q.id == this.id) || {}
         }),
-        api.getQuestions(this.id).then(questions => {
+        provider.getQuestions(this.id).then(questions => {
           this.questions = questions
         })
       ]).finally(() => {
@@ -87,15 +89,15 @@ export default {
       })
     },
     updateQuiz() {
-      api.updateQuestionnaire(this.id, { name: this.questionnaire.name })
+      provider.updateQuestionnaire(this.id, { name: this.questionnaire.name })
         .catch(error => {
           console.error('Error updating questionnaire:', error)
           this.fetchData()
         })
     },
     deleteQuiz() {
-      if (confirm('Êtes-vous sûr de vouloir supprimer ce questionnaire et toutes ses questions ?')) {
-        api.deleteQuestionnaire(this.id)
+      if (confirm('Etes-vous sur de vouloir supprimer ce questionnaire et toutes ses questions ?')) {
+        provider.deleteQuestionnaire(this.id)
           .then(() => {
             this.$router.push('/')
           })
@@ -145,8 +147,8 @@ export default {
       const isNew = !questionData.id
       
       const savePromise = isNew 
-        ? api.createQuestion(this.id, questionData)
-        : api.updateQuestion(questionData.id, questionData)
+        ? provider.createQuestion(this.id, questionData)
+        : provider.updateQuestion(questionData.id, questionData)
       
       savePromise
         .then(() => {
@@ -158,8 +160,8 @@ export default {
         })
     },
     deleteQuestion(id) {
-      if (confirm('Êtes-vous sûr de vouloir supprimer cette question ?')) {
-        api.deleteQuestion(id)
+      if (confirm('Etes-vous sûr de vouloir supprimer cette question ?')) {
+        provider.deleteQuestion(id)
           .then(() => {
             this.fetchData()
             this.deselectQuestion()
