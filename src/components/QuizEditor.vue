@@ -11,20 +11,45 @@
         </div>
       </div>
       
+      <QuestionList 
+        :questions="questions" 
+        @select-question="selectQuestion"
+        @delete-question="deleteQuestion"
+        @add-question="showQuestionTypeSelector = true"
+      />
+      
       <div v-if="showQuestionTypeSelector" class="question-type-selector">
         <h3>Ajouter une question</h3>
         <button @click="addQuestion('open')">Question Ouverte</button>
         <button @click="addQuestion('mcq')">Question à Choix Multiples</button>
         <button @click="showQuestionTypeSelector = false">Annuler</button>
       </div>
+      
+      <OpenQuestionForm 
+        v-if="selectedQuestionType === 'open' && selectedQuestion" 
+        :question="selectedQuestion"
+        @save="saveQuestion"
+        @cancel="deselectQuestion"
+      />
+      
+      <McqQuestionForm 
+        v-if="selectedQuestionType === 'mcq' && selectedQuestion" 
+        :question="selectedQuestion"
+        @save="saveQuestion"
+        @cancel="deselectQuestion"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import api from '@/services/api'
+import QuestionList from './QuestionList'
 
 export default {
+  components: {
+    QuestionList,
+  },
   props: {
     id: {
       type: [String, Number],
@@ -63,7 +88,7 @@ export default {
       api.updateQuestionnaire(this.id, { name: this.questionnaire.name })
         .catch(error => {
           console.error('Error updating questionnaire:', error)
-          this.fetchData()
+          this.fetchData() // Revert changes if error
         })
     },
     deleteQuiz() {
