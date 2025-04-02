@@ -45,10 +45,12 @@
 <script>
 import api from '@/services/api'
 import QuestionList from './QuestionList'
+import OpenQuestionForm from './OpenQuestionForm'
 
 export default {
   components: {
     QuestionList,
+    OpenQuestionForm,
   },
   props: {
     id: {
@@ -88,7 +90,7 @@ export default {
       api.updateQuestionnaire(this.id, { name: this.questionnaire.name })
         .catch(error => {
           console.error('Error updating questionnaire:', error)
-          this.fetchData() // Revert changes if error
+          this.fetchData()
         })
     },
     deleteQuiz() {
